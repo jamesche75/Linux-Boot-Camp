@@ -478,7 +478,7 @@ you'll be prompted to do that first.)
 
 ![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing Docker")
 
-Now you can click on Create, Create Automated Build again and you'll see
+Now you can click on **Create**, **Create Automated Build** again and you'll see
 the option to create an auto-build from GitHub.
 
 ![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig6_CreateAutomatedBuild.png "Create Automated Build")
