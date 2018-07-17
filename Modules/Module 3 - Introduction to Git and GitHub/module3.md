@@ -128,7 +128,7 @@ the central repository to be. You then run the following command to
 create the repository.
 
 ``` 
-git init --bare *\<repository\_name\>*.git 
+git init --bare repository_name.git 
 ```
 
 You don't have to use the ``.git`` extension, but standard naming
@@ -188,7 +188,7 @@ have been deleted.
 git add -a
 ```
 
-\-- or --
+  or
 
 ```
 git add --all
