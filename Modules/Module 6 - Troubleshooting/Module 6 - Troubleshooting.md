@@ -365,7 +365,7 @@ Go to the **Site** tab and check the ``linux_fx_version`` property.
   - App Service on Linux will show the runtime stack and version. For
     example:
 
-    ``linux_fx_version": "php|7.0"``
+    ``"linux_fx_version": "php|7.0"``
 
   - Web App for Containers with a single container will start with
     ``DOCKER`` and will show the path to the container. For example:
