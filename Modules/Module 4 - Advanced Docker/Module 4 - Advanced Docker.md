@@ -336,18 +336,14 @@ problem you might encounter.
 It's common for a developer to want to run many commands when a
 container is started. An initialization shell script is a common method
 of doing that. Once the script is ready and added to the Docker image,
-it can be executed using ENTRYPOINT. Here's an example.
+it can be executed using ``ENTRYPOINT``. Here's an example.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>FROM nginx</p>
-<p>COPY init.sh /bin/ # copy the script to the /bin directory.</p>
-<p>RUN chmod 755 /bin/init.sh # set permissions</p>
-<p>ENTRYPOINT [&quot;/bin/init.sh&quot;]</p></td>
-</tr>
-</tbody>
-</table>
+```
+FROM nginx
+COPY init.sh /bin/ # copy the script to the /bin directory.
+RUN chmod 755 /bin/init.sh # set permissions
+ENTRYPOINT ["/bin/init.sh"]
+```
 
 This is something you'll commonly see in App Service because our
 guidance on building custom images recommends it.
@@ -370,23 +366,21 @@ use a .dockerignore file.
 The .dockerignore file uses the *Match* function in the Go language to
 match files. (You can see the documentation on the Match function at
 https://golang.org/pkg/path/filepath/\#Match.) However, Docker adds an
-additional wildcard string of **\*\*** that matches any number of
-directories. For example, to ignore all files with a .tmp file extension
+additional wildcard string of ** that matches any number of
+directories. For example, to ignore all files with a ``.tmp`` file extension
 in all directories, you can include the following in your .dockerignore
 file.
 
-|             |
-| ----------- |
-| \*\*/\*.tmp |
+```
+**/*.tmp
+```
 
-This will exclude all .tmp files, even those in the root
+This will exclude all ``.tmp`` files, even those in the root
 folder.
 
-|                       |                                                                                                                           |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image1.png) | For more information on the .dockerignore file, see https://docs.docker.com/engine/reference/builder/\#dockerignore-file. |
+For more information on the .dockerignore file, see https://docs.docker.com/engine/reference/builder/\#dockerignore-file. 
 
-# Creating an Image Using docker commit
+# Creating an Image Using ``docker commit``
 
 Once you run a Docker container, you can make changes to the container
 and then *commit* those changes to a new Docker image. For example, you
@@ -396,59 +390,45 @@ run, the resulting container will include the components you installed.
 
 Here's an example of how this works.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>$ docker build -t jimsubuntu:v1 . #build my image</p>
-<p>...</p>
-<p>$ docker run -it jimsubuntu:v1 sh #run my image</p></td>
-</tr>
-</tbody>
-</table>
+```
+$ docker build -t jimsubuntu:v1 . #build my image
+...
+$ docker run -it jimsubuntu:v1 sh #run my image
+```
 
 After I run my image, I'll be sitting at a shell prompt. I'll install
 OpenSSH from that prompt.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p># apt-get update</p>
-<p>...</p>
-<p># apt-get install -y --no-install-recommends openssh-server</p></td>
-</tr>
-</tbody>
-</table>
+```
+# apt-get update
+...
+# apt-get install -y --no-install-recommends openssh-server
+```
 
-Once this install finishes, I can use docker commit to create a new
-docker image with the changes I've made. However, first I'll need to get
+Once this install finishes, I can use ``docker commit`` to create a new
+Docker image with the changes I've made. However, first I'll need to get
 the name of the running container.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>$ docker ps #show running containers</p>
-<p>CONTAINER ID IMAGE COMMAND STATUS NAMES</p>
-<p>cd6f147957ca jimub &quot;sh&quot; Up About a minute goofy_bardeen</p></td>
-</tr>
-</tbody>
-</table>
+```
+$ docker ps #show running containers
+CONTAINER ID IMAGE COMMAND STATUS            NAMES
+cd6f147957ca jimub "sh"    Up About a minute goofy_bardeen
+```
 
-(I have removed some of the output of this command.) When you run docker
-commit, you can either use the container ID or the container name. I'm
-going to use the container name, goofy\_bardeen.
+(I have removed some of the output of this command.) When you run ``docker
+commit``, you can either use the container ID or the container name. I'm
+going to use the container name, ``goofy\_bardeen``.
 
-|                                              |
-| -------------------------------------------- |
-| $ docker commit goofy\_bardeen jimsubuntu:v2 |
+```
+$ docker commit goofy\_bardeen jimsubuntu:v2
+```
 
 When I run this, I'll end up with a new Docker image called
-jimsubuntu:v2 that contains the contents of the original Docker image
+jimsubuntu:v2 that contains the contents of the original Docker image,
 plus any changes I made to the running
 container.
 
-|                       |                                                                                                                                         |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | The name "goofy\_bardeen" was given to the container by the Docker daemon because I didn't explicitly give it a name when I started it. |
+> **Note:** The name "goofy\_bardeen" was given to the container by the Docker daemon because I didn't explicitly give it a name when I started it.
 
 # Using an Automated Build with Docker Hub and GitHub
 
@@ -475,46 +455,46 @@ Next, you'll need to link your GitHub account to Docker Hub. To do that,
 first click on **Create**, **Create** **Automated Build** in Docker Hub
 as shown below.
 
-![](media/image3.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig1_CreateAutomatedBuild.png "Creating an Automated Build")
 
 Then you'll need to click on **Link Accounts** to link your GitHub
 account.
 
-![](media/image4.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig2_LinkAccount.png "Linking Your Account")
 
 Next, you'll click on **Link Github** to link your GitHub account to
 Docker Hub.
 
-![](media/image5.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig3_LinkGitHub.png "Link to GitHub")
 
 Next, you'll choose between **Public and Private** or **Limited
 Access**. **Public and Private** is recommended.
 
-![](media/image6.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig4_Access.png "Setting Access Level")
 
 You'll be redirected to GitHub where you'll want to click on **Authorize
-docker** to complete the connection. (If you aren't logged into GitHub,
+Docker** to complete the connection. (If you aren't logged into GitHub,
 you'll be prompted to do that first.)
 
-![](media/image7.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing GitHub")
 
 Now you can click on Create, Create Automated Build again and you'll see
 the option to create an auto-build from GitHub.
 
-![](media/image8.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig6_CreateAutomatedBuild.png "Create Automated Build")
 
-![](media/image9.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig7_CreateGitHub.png "Create from GitHub")
 
 Click on the GitHub repository that you want to use for your Docker
 image.
 
-![](media/image10.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig8_ChooseRepo.png "Choose Repo")
 
 Give your automated build a short description and then click on
 **Create** to create your Docker Hub repository linked to the GitHub
 repository.
 
-![](media/image11.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig9_Create.png "Creating the Build")
 
 At this point, if you push new changes to your GitHub repository, a new
 Docker image will be created. However, if you want to create a Docker
@@ -524,22 +504,20 @@ manually trigger your first build.
 Click on **Build Settings** in Docker Hub and then click on **Trigger**
 to trigger a build.
 
-![](media/image12.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig10_Trigger.png "Trigger the Build")
 
 You can view the status of your build by clicking on **Build Details**.
 Note that the build status isn't updated in real-time, so you'll need to
 click on **Build Details** to refresh the status.
 
-![](media/image13.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig11_BuildDetails.png "Build Details")
 
 Note that after the initial build, you will not have to manually trigger
 a build. The automated build will automatically trigger when you push
 changes to your GitHub
 repository.
 
-|                       |                                                                                                                                     |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | You should also configure CI/CD in Web App for Containers at this point. See the **App Service and Linux** module for more details. |
+> **Note:** You should also configure CI/CD in Web App for Containers at this point. See **Module 5 - App Service and Linux** for more details.
 
 # Multi-Container Deployments
 
@@ -561,6 +539,8 @@ Docker Compose allows you to define the *services* that make up an
 application using a YAML file. Each service equates to a Docker image,
 and you can specify many settings for each of these images.
 
+> **Note:** We'll cover this information again (and with more detail) in Module 5. In this section, you'll learn how multi-containers work in general. Module 5 covers how we implement it in App Service.
+
 A Compose application's services are defined in a Compose file. The
 Compose file is typically named *docker-compose.yml*, but it's possible
 to pass your own filename when you start a Compose application.
@@ -568,42 +548,39 @@ to pass your own filename when you start a Compose application.
 Below is a simple Compose file that defines two services, *webapp* and
 *database*.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>version: '3'</p>
-<p>services:</p>
-<p>webapp:</p>
-<p>image: djangoweb</p>
-<p>ports: 80</p>
-<p>database:</p>
-<p>image: mysqldb:weblatest</p>
-<p>ports: 3306</p></td>
-</tr>
-</tbody>
-</table>
+```
+version: '3'
+
+services:
+  webapp:
+    image: djangoweb
+    ports: 80
+  database:  
+    image: mysqldb:weblatest
+    ports: 3306
+```
 
 Once you've defined the services, you start the app using the
-docker-compose up command.
+``docker-compose up`` command.
 
-|                        |
-| ---------------------- |
-| $ docker-compose up -d |
+```
+$ docker-compose up -d 
+```
 
-When you run this command, Docker will look for a *docker-compose.yml*
+When you run this command, Docker will look for a ``docker-compose.yml``
 file in the current directory. If it doesn't find one, an error will
 result. In order for the app to successfully start, all of the services
-defined in the Compose file must start. If any of them fails to start,
+defined in the Compose file must start. If any of them fail to start,
 the entire app will fail.
 
-Once the app has started, you can stop the app by running docker-compose
-down.
+Once the app has started, you can stop the app by running ``docker-compose
+down``.
 
 ## Kubernetes (K8s)
 
-Kubernetes (often referred to as K8s) is another orchestration service
+Kubernetes (often referred to as Kube or K8s) is another orchestration service
 that allows you to define a multi-container deployment. In App Service,
-we support the deployment of K8s *pods* only. A pod is a multi-container
+we support the deployment of Kubernetes *pods* only. A pod is a multi-container
 app where all containers run on the same host.
 
 Much like a Compose application, a Kubernetes pod is defined using a
@@ -612,48 +589,40 @@ YAML format, but in App Service, we support the JSON format only.
 
 Here's a simple pod configuration file.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>apiVersion: v1</p>
-<p>kind: Pod</p>
-<p>metadata:</p>
-<p>name: JimsPod</p>
-<p>namespace: WebApp11</p>
-<p>spec:</p>
-<p>containers:</p>
-<p>- image: djangoweb</p>
-<p>name: webapp</p>
-<p>ports:</p>
-<p>- containerPort: 80</p>
-<p>- image: mysqldb:weblatest</p>
-<p>name: database</p>
-<p>ports:</p>
-<p>- containerPort: 3306</p></td>
-</tr>
-</tbody>
-</table>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: JimsPod
+  namespace: WebApp11
+spec:
+  containers:
+    - image: djangoweb
+      name: webapp
+      ports:
+        - containerPort: 80
+    - image: mysqldb:weblatest
+      name: database
+      ports:
+        - containerPort: 3306
+```
 
-To run the app, run kubectl create and pass in the filename.
+To run the app, run ``kubectl create`` and pass in the filename.
 
-|                                       |
-| ------------------------------------- |
-| $ kubectl create -f webapp-config.yml |
+```
+$ kubectl create -f webapp-config.yml 
+```
 
-You can then see the pod by running kubectl get pods.
+You can then see the pod by running ``kubectl get pods``.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>$ kubectl get pods</p>
-<p>NAME READY STATUS RESTARTS AGE</p>
-<p>JimsPod 1/1 Running 0 10m</p></td>
-</tr>
-</tbody>
-</table>
+```
+$ kubectl get pods
+NAME    READY STATUS   RESTARTS AGE
+JimsPod 1/1   Running  0        10m
+```
 
-To delete a pod (and shut down the app), use kubectl delete.
+To delete a pod (and shut down the app), use ``kubectl delete``.
 
-|                              |
-| ---------------------------- |
-| $ kubectl delete pod JimsPod |
+```
+$ kubectl delete pod JimsPod 
+```
