@@ -128,7 +128,7 @@ instruction, your image will be a duplicate of the Ubuntu image.
 However, most of the time, you'll want to add additional instructions to
 your Dockerfile. For example, you might want files that are in your
 build context to be added to your image. (We'll cover more on that later
-in the **Adding Files from the Context**
+in the [**Adding Files from the Context**](#adding-files-from-the-context)
 section.)
 
 > **Note:** Docker recommends the Alpine image as a parent image. It's lightweight and has a complete package index, so it's easy to add what you want without too much overhead.
