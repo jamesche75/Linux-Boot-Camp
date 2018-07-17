@@ -222,7 +222,7 @@ RUN \
 
 In this example, the ``RUN`` instruction is used to run the Advanced Package
 Tool (APT) to install OpenSSH server and then change the permissions on
-a couple of directories. The "\" character is used when you want to
+a couple of directories. The "\\" character is used when you want to
 continue the ``RUN`` instruction on a new line.
 
 When the ``RUN`` instruction is used, the command is executed in a new layer on top of the existing Docker image. The change is then committed to a new image. You'll learn more about comitting changes to a new image later in this module.
