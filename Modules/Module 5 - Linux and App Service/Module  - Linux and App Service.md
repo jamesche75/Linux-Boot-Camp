@@ -1,8 +1,8 @@
-# Module 5 - Web Apps and Linux
+# Module 5 - Linux and App Service
 
 This module will introduce you to App Service on Linux and Web App for
 Containers. The concepts you learn in this module will enable you to
-host web apps on Linux.
+host Web Apps on Linux.
 
 ## Prerequisites
 
@@ -45,7 +45,7 @@ on Linux.
 
 Both options use Docker containers. App Service on Linux uses Docker
 images maintained by Microsoft and Web App for Containers allows
-customers to use their own Docker images.
+customers to use their own Docker images or images from a Docker registry.
 
 Not all App Service features are available to Linux customers. If a
 feature is not currently enabled for Linux, it will be grayed out in the
@@ -57,7 +57,7 @@ added.
 Here is a simple representation of the container architecture on the
 Linux worker.
 
-> ![](media/image1.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%205%20-%20Linux%20and%20App%20Service/images/Fig1-Nginx.png "Linux Stamp Architecture")
 
 Every Linux worker runs Nginx. Nginx is the proxy between the front-end
 and the Docker containers running on the worker.
@@ -81,9 +81,7 @@ supported.
 | Ruby          | 2.3                                                                    |
 | Apache Tomcat | 8.5, 9.0                                                               |
 
-|                       |                                                                                                 |
-| --------------------- | ----------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | Internally, we refer to the Docker images provided in App Service on Linux as *blessed images*. |
+> **Note:** Internally, we refer to the Docker images provided in App Service on Linux as *blessed images*. 
 
 We make our blessed images available to customers in both GitHub and in
 Docker Hub. You can find our Docker Hub repos at
@@ -93,7 +91,7 @@ Repository** in GitHub.
 
 To use our built-in images, set the **OS** to **Linux** as shown below.
 
-![](media/image3.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%205%20-%20Linux%20and%20App%20Service/images/Fig2-Create.png "Creating a Web App on Linux")
 
 After you choose Linux as the OS, you'll need to use the **Runtime
 Stack** dropdown to select the language and version you want to use for
@@ -104,7 +102,7 @@ You can change the runtime stack after creating a Web App using the
 **Runtime** section in the Application Settings blade as shown in the
 figure below.
 
-![](media/image4.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%205%20-%20Linux%20and%20App%20Service/images/Fig3-Stack.png "Setting the Runtime Stack")
 
 In addition to the **Stack** option here, you can also specify a startup
 file. The startup file is used for:
@@ -127,9 +125,7 @@ available in our built-in images. Customers can host Docker images on
 Docker Hub, Azure Container Registry, or any other Docker
 registry.
 
-|                       |                                                                                                                                             |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image5.png) | For information on building a custom image, see https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-custom-docker-image. |
+> **Note:** For information on building a custom image, see https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-custom-docker-image. |
 
 To use your own image, select **Docker** as shown below. Under
 **Configure Container** you will need to provide the **image** and the
@@ -141,13 +137,15 @@ listen for HTTP requests and send HTTP responses. Therefore, if a Docker
 image isn't intended to meet those requirements, it won't work in Web
 App for Containers.
 
+> **Note:** You'll sometimes see Web App for Containers referred to as WAfC.
+
 For example, a Docker image consisting of a daemon that monitors a
 directory for new files and processes those files will not work in Web
 App for Containers. In fact, such an image won't even successfully start
 in Web App for Containers because we require that a container respond to
 an HTTP ping for it to be considered a successful start.
 
-![](media/image6.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%205%20-%20Linux%20and%20App%20Service/images/Fig4-WAfC.png "Creating a Web App for Containers app.")
 
 # Configuring Web Apps in Linux
 
@@ -166,26 +164,22 @@ point pointing to an Azure Storage volume. Therefore, by default, Web
 App for Containers apps do not use Azure Storage for storing any
 content.
 
-|                       |                                                                                                                       |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | We decided not to mount an Azure Storage volume for Linux sites to prevent problems caused by Azure Storage failover. |
+> **Note:** We decided not to mount an Azure Storage volume for Linux sites to prevent problems caused by Azure Storage failover. 
 
 In some situations, a customer might want to persist files to Azure
 Storage. Setting an app setting named
-WEBSITES\_ENABLE\_APP\_SERVICE\_STORAGE with a value of **True** will
+``WEBSITES_ENABLE_APP_SERVICE_STORAGE`` with a value of **True** will
 cause App Service to mount Azure Storage to /home.
 
 Actually, it's a little more complicated than that. The default for
-**WEBSITES\_ENABLE\_APP\_SERVICE\_STORAGE** is true, so when you create
+``WEBSITES_ENABLE_APP_SERVICE_STORAGE`` is **True**, so when you create
 a new Web App for Containers app, we add the app setting with a value of
-**false**. If you decide that you want to have persistent storage, you
+**False**. If you decide that you want to have persistent storage, you
 can delete the app setting and it will have the same effect as changing
 the value to
-**true**.
+**True**.
 
-|                       |                                                                                               |
-| --------------------- | --------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | Keep in mind that when storage persistence is enabled, only the /home directory is persisted. |
+> **Note:** Keep in mind that when storage persistence is enabled, only the /home directory is persisted. 
 
 ## Installing from SSH - All Linux Apps
 
@@ -195,7 +189,7 @@ idea because anything that you install will not persist between restarts
 of your app.
 
 All our Linux Web App offerings are Docker-based, so a cold start of the
-app will reinitialize everything to what's included in the Docker
+app will reinitialize everything to only what's included in the Docker
 container. Anything that's been added since container startup will be
 gone after a restart.
 
@@ -212,8 +206,8 @@ make sure that your deployment endpoint isn't pointing to the Kudu
 container.
 
 To ensure that your deployment succeeds with Web Deploy, you can add an
-app setting with a name of **WEBSITES\_WEBDEPLOY\_USE\_SCM** and set the
-value to **false**.
+app setting with a name of ``WEBSITES_WEBDEPLOY_USE_SCM`` and set the
+value to **False**.
 
 ## Increasing the Start Time Limit - Web App for Containers Only
 
@@ -226,32 +220,28 @@ We will wait 230 seconds for a container to start before we decide that
 it failed to start. However, if your container takes longer than 230
 seconds to start, you can increase the time period that we wait up to a
 limit of 1,800 seconds. To do so, add an app setting named
-**WEBSITES\_CONTAINER\_START\_TIME\_LIMIT** and set the value to the
+``WEBSITES_CONTAINER_START_TIME_LIMIT`` and set the value to the
 number of seconds you want App Service to wait for the container to
 start. (Don't include commas. If you want us to wait 1,800 seconds, set
 the value to
 **1800**.)
 
-|                       |                                                                                                                                 |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | A container startup is considered successful only after the Docker container starts and the container responds to an HTTP ping. |
+> **Note:** A container startup is considered successful only after the Docker container starts and the container responds to an HTTP ping. 
 
 ## Exposing Ports - Web App for Containers Only
 
-App Service will use Docker's *inspect* command to try and determine
-what port your Docker image needs to expose the outside world. However,
+App Service will use Docker's ``inspect`` command to try and determine
+what port your Docker image needs to expose to the outside world. However,
 in some cases, we can't determine the port. If that's the case, your
 Docker container may fail to start because it won't respond to our HTTP
 pings.
 
 You can add an app setting to tell App Service what port to expose in
-your container. Add the **WEBSITES\_PORT** app setting and set the value
+your container. Add the ``WEBSITES_PORT`` app setting and set the value
 to the port you want to
 expose.
 
-|                       |                                                                                                                                                                                                       |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | This app setting used to be called **PORT** instead of **WEBSITES\_PORT**. As of this writing, we will honor either of these app settings, but at some point, we will deprecate the PORT app setting. |
+This app setting used to be called ``PORT`` instead of ``WEBSITES_PORT``. As of this writing, we will honor either of these app settings, but at some point, we will deprecate the ``PORT`` app setting. 
 
 ## SSL and Linux
 
@@ -274,30 +264,26 @@ App Service will inject the app setting into the container as an
 environment
 variable.
 
-|                       |                                                                                                                                                                                                                                   |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | You won't see your environment variables in the Bash console in Kudu. The Bash console runs in a different context (the Kudu container) than your app. If you want to see your environment variables, use SSH to access your app. |
+You won't see your environment variables in the Bash console in Kudu. The Bash console runs in a different context (the Kudu container) than your app. If you want to see your environment variables, use SSH to access your app.
 
 # Continuous Deployment
 
 Customers can enable continuous deployment so that deployment happens
 automatically when a change is pushed to an image. To enable continuous
-deployment, turn it on in the portal and ensure that your registry is
+deployment, turn it on in the portal and ensure that your Docker registry is
 configured with the webhook URL shown in the Azure
 portal.
 
-![C:\\Users\\jamesche\\AppData\\Local\\Temp\\SNAGHTML98370f6.PNG](media/image7.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%205%20-%20Linux%20and%20App%20Service/images/Fig5-CICD.png "Configuring Continuous Deployment")
 
 When a new Docker image is pushed to your registry, the registry will
 use a webhook to call the webhook URL. This hits an SCM endpoint at
-/docker/hook in App Service and tells App Service to do a pull on the
+``/docker/hook`` in App Service and tells App Service to do a pull on the
 new image. At that point, App Service will perform an overlapped recycle
 of the Web App once the new container is
 running.
 
-|                       |                                                                                                                                                                                                                          |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| ![](media/image2.png) | The image:tag combination must remain the same in order to continuous integration to work. If you change the tag on an image, you’ll need to change the tag in the Azure portal in order for the new image to be pulled. |
+> **Note:** The image:tag combination must remain the same in order to continuous integration to work. If you change the tag on an image, you’ll need to change the tag in the Azure portal in order for the new image to be pulled.
 
 # Multi-Container Deployments
 
@@ -319,7 +305,7 @@ the web container.
 1.  If your YAML file has only one container in it, we'll use that
     container as the web container.
 
-2.  If you have set the WEBSITES\_WEB\_CONTAINER\_NAME app setting, we
+2.  If you have set the ``WEBSITES_WEB_CONTAINER_NAME`` app setting with a value of the container to use as the web container, we
     will use that as the web container.
 
 3.  We will pick the first container in your YAML file that exposes
@@ -344,50 +330,43 @@ In Docker Compose, the YAML configuration file is referred to as a
 each service consists of a Docker image and various settings. Consider
 the following sample compose file from our online documentation.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>version: '3.3'</p>
-<p>services:</p>
-<p>db:</p>
-<p>image: mysql:5.7</p>
-<p>volumes:</p>
-<p>- db_data:/var/lib/mysql</p>
-<p>restart: always</p>
-<p>environment:</p>
-<p>MYSQL_ROOT_PASSWORD: somewordpress</p>
-<p>MYSQL_DATABASE: wordpress</p>
-<p>MYSQL_USER: wordpress</p>
-<p>MYSQL_PASSWORD: wordpress</p>
-<p>wordpress:</p>
-<p>image: wordpress:latest</p>
-<p>ports:</p>
-<p>- &quot;8000:80&quot;</p>
-<p>restart: always</p>
-<p>environment:</p>
-<p>WORDPRESS_DB_HOST: db:3306</p>
-<p>WORDPRESS_DB_USER: wordpress</p>
-<p>WORDPRESS_DB_PASSWORD: wordpress</p>
-<p>volumes:</p>
-<p>db_data:</p></td>
-</tr>
-</tbody>
-</table>
+```
+version: '3.3'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
 
-|                       |                                                                                                                                                                                                                                                       |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | Indentation is important in your YAML files. The number of spaces you indent doesn’t matter, but it must be at least one space, and you should always use the same number of spaces for the same indentation level. Do not use tabs. Use only spaces. |
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress 
 
-This compose file defines two services; db and wordpress. The db service
-uses the mysql:5.7 Docker image, and the wordpress service uses the
-wordpress:latest Docker image. (Both of these Docker images will be
-pulled from the Docker Hub registry.) Notice also that the wordpress
+volumes:
+  db_data:
+```
+> **Note:** Indentation is important in your YAML files. The number of spaces you indent doesn’t matter, but it must be at least one space, and you should always use the same number of spaces for the same indentation level. Do not use tabs. Use only spaces.
+
+This compose file defines two services; ``db`` and ``wordpress``. The ``db`` service
+uses the ``mysql:5.7`` Docker image, and the ``wordpress`` service uses the
+``wordpress:latest`` Docker image. (Both of these Docker images will be
+pulled from the Docker Hub registry.) Notice also that the ``wordpress``
 service maps port 80, so this will be the web container in the
 deployment.
 
-|                       |                                                                                                                                                                                                                                                      |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | We don’t support all Docker Compose configuration options in App Service. To see what we do and don’t support, see https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app\#docker-compose-configuration-options. |
+> **Note:** We don’t support all Docker Compose configuration options in App Service. To see what we do and don’t support, see https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app\#docker-compose-configuration-options. 
 
 ## Kubernetes (Kube or K8s)
 
@@ -401,9 +380,7 @@ Docker. Kubernetes requires a runtime to host the containers that it
 manages, and in App Service, that runtime is
 Docker.
 
-|                       |                                                                                                                         |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | Docker has its own orchestration feature called *Docker Swarm*. We don’t currently support Docker Swarm in App Service. |
+> **Note:** Docker has its own orchestration feature called *Docker Swarm*. We don’t currently support Docker Swarm in App Service. 
 
 In App Service, we support the creation of a Kubernetes *pod*, a group
 of containers that share storage and a network. To define a Kubernetes
@@ -415,45 +392,41 @@ Here’s a sample Kubernetes config file. Note that the *kind* key must
 have a value of *Pod* as that’s the only Kubernetes object we support in
 App Service.
 
-<table>
-<tbody>
-<tr class="odd">
-<td><p>apiVersion: v1</p>
-<p>kind: Pod</p>
-<p>metadata:</p>
-<p>name: wordpress</p>
-<p>spec:</p>
-<p>containers:</p>
-<p>- image: redis:3-alpine</p>
-<p>name: redis</p>
-<p>- image: microsoft/multicontainerwordpress</p>
-<p>name: wordpress</p>
-<p>ports:</p>
-<p>- containerPort: 80</p>
-<p>volumeMounts:</p>
-<p>- name: appservice-storage</p>
-<p>mountPath: /var/www/html</p>
-<p>subPath: /site/wwwroot</p>
-<p>volumes:</p>
-<p>- name: appservice-storage</p>
-<p>hostConfig:</p>
-<p>path: ${WEBAPP_STORAGE_HOME}</p></td>
-</tr>
-</tbody>
-</table>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wordpress
+spec:
+  containers:
+    - image: redis:3-alpine
+      name: redis
+    - image: microsoft/multicontainerwordpress
+      name: wordpress
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: appservice-storage
+          mountPath: /var/www/html
+          subPath: /site/wwwroot
+volumes:
+  - name: appservice-storage
+    hostConfig:
+    path: ${WEBAPP_STORAGE_HOME}
+```
 
-Note that **${WEBAPP\_STORAGE\_HOME}** is used when you need to refer to
+Note that ``${WEBAPP_STORAGE_HOME}`` is used when you need to refer to
 the shared storage location made available when App Service Storage is
 enabled.
 
-We don’t support all Kubernetes options in the config file. For the
+> **Note:** We don’t support all Kubernetes options in the config file. For the
 official list of what we support, see
 https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app\#use-a-kubernetes-configuration-optional.
 
 # Kudu 
 
 On Linux workers, Kudu runs inside a separate container from the Web
-App. Kudu can be accessed by browsing to . In Kudu, you can click on
+App. Kudu can be accessed by browsing to the SCM URL for your Web App. In Kudu, you can click on
 Debug Console to access two different command line consoles; Bash and
 SSH.
 
@@ -463,9 +436,9 @@ on Linux or if you are using Web App for Containers with App Service
 Storage enabled, you will see the /home folder for your Web App as shown
 below.
 
-![](media/image8.png)
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%205%20-%20Linux%20and%20App%20Service/images/Fig6-Kudu.png "The CIFS mount in a Linux app.")
 
-If you click SSH on the Debug Console menu, you will connect to the Web
+If you click **SSH** on the **Debug Console** menu, you will connect to the Web
 App’s container via SSH. For this to successfully connect, your Web App
 must be running. If the Web App is stopped, SSH will not be able to
 connect.
@@ -486,6 +459,4 @@ You can find all of the information necessary to SSH using your favorite
 method by going to
 <https://aka.ms/ThingsYouShouldKnow/AppServiceSSH>.
 
-|                       |                                                                                                                  |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| ![](media/image2.png) | Opening a TCP tunnel also allows you to use SFTP and to remotely debug your Node.js apps running in App Service. |
+> **Note:** Opening a TCP tunnel also allows you to use SFTP and to remotely debug your Node.js apps running in App Service. 
