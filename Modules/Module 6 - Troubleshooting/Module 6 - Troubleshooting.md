@@ -349,7 +349,7 @@ Here are some of the properties that you can check.
 
 ## Verifying the Linux OS
 
-Go to the **Server Farm** tab and check the ``is\_linux`` property. If it's
+Go to the **Server Farm** tab and check the ``is_linux`` property. If it's
 ``true``, the site is running on Linux.
 
 ![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%206%20-%20Troubleshooting/images/Fig5-is_linux.png "is_linux Property")
@@ -360,12 +360,12 @@ You can use Observer to see if an app is running App Service on Linux,
 Web App for Containers with a single container, or Web App for
 Containers with a multi-container deployment.
 
-Go to the **Site** tab and check the ``linux\_fx\_version`` property.
+Go to the **Site** tab and check the ``linux_fx_version`` property.
 
   - App Service on Linux will show the runtime stack and version. For
     example:
 
-    ``linux\_fx\_version": "php|7.0"``
+    ``linux_fx_version": "php|7.0"``
 
   - Web App for Containers with a single container will start with
     ``DOCKER`` and will show the path to the container. For example:
@@ -376,7 +376,7 @@ Go to the **Site** tab and check the ``linux\_fx\_version`` property.
     The example below shows a Docker Compose multi-container deployment.
 
 ```
-"linux\_fx\_version": "COMPOSE|dmVyc2lvbjogJzMuMycNCg0Kc2VydmljZXM6DQogICBkYjoNCiAgICAgaW1hZ2U6IG15c3FsOjUuNw0KICAgICB2b2x1bWVzOg0KICAgICAgIC0gZGJfZGF0YTovdmFyL2xpYi9teXNxbA0KICAgICByZXN0YXJ0OiBhbHdheXMNCiAgICAgZW52aXJvbm1lbnQ6DQogICAgICAgTVlTUUxfUk9PVF9QQVNTV09SRDogc29tZXdvcmRwcmVzcw0KICAgICAgIE1ZU1FMX0RBVEFCQVNFOiB3b3JkcHJlc3MNCiAgICAgICBNWVNRTF9VU0VSOiB3b3JkcHJlc3MNCiAgICAgICBNWVNRTF9QQVNTV09SRDogd29yZHByZXNzDQoNCiAgIHdvcmRwcmVzczoNCiAgICAgZGVwZW5kc19vbjoNCiAgICAgICAtIGRiDQogICAgIGltYWdlOiB3b3JkcHJlc3M6bGF0ZXN0DQogICAgIHBvcnRzOg0KICAgICAgIC0gIjgwMDA6ODAiDQogICAgIHJlc3RhcnQ6IGFsd2F5cw0KICAgICBlbnZpcm9ubWVudDoNCiAgICAgICBXT1JEUFJFU1NfREJfSE9TVDogZGI6MzMwNg0KICAgICAgIFdPUkRQUkVTU19EQl9VU0VSOiB3b3JkcHJlc3MNCiAgICAgICBXT1JEUFJFU1NfREJfUEFTU1dPUkQ6IHdvcmRwcmVzcw0Kdm9sdW1lczoNCiAgICBkYl9kYXRhOg==", 
+"linux_fx_version": "COMPOSE|dmVyc2lvbjogJzMuMycNCg0Kc2VydmljZXM6DQogICBkYjoNCiAgICAgaW1hZ2U6IG15c3FsOjUuNw0KICAgICB2b2x1bWVzOg0KICAgICAgIC0gZGJfZGF0YTovdmFyL2xpYi9teXNxbA0KICAgICByZXN0YXJ0OiBhbHdheXMNCiAgICAgZW52aXJvbm1lbnQ6DQogICAgICAgTVlTUUxfUk9PVF9QQVNTV09SRDogc29tZXdvcmRwcmVzcw0KICAgICAgIE1ZU1FMX0RBVEFCQVNFOiB3b3JkcHJlc3MNCiAgICAgICBNWVNRTF9VU0VSOiB3b3JkcHJlc3MNCiAgICAgICBNWVNRTF9QQVNTV09SRDogd29yZHByZXNzDQoNCiAgIHdvcmRwcmVzczoNCiAgICAgZGVwZW5kc19vbjoNCiAgICAgICAtIGRiDQogICAgIGltYWdlOiB3b3JkcHJlc3M6bGF0ZXN0DQogICAgIHBvcnRzOg0KICAgICAgIC0gIjgwMDA6ODAiDQogICAgIHJlc3RhcnQ6IGFsd2F5cw0KICAgICBlbnZpcm9ubWVudDoNCiAgICAgICBXT1JEUFJFU1NfREJfSE9TVDogZGI6MzMwNg0KICAgICAgIFdPUkRQUkVTU19EQl9VU0VSOiB3b3JkcHJlc3MNCiAgICAgICBXT1JEUFJFU1NfREJfUEFTU1dPUkQ6IHdvcmRwcmVzcw0Kdm9sdW1lczoNCiAgICBkYl9kYXRhOg==", 
 ```
 Note that since the string is Base64 encoded, you can decode it easily. For example, if we decode the above string, this is what we
 get.
@@ -388,7 +388,7 @@ services:
    db:
      image: mysql:5.7
      volumes:
-       - db\_data:/var/lib/mysql
+       - db_data:/var/lib/mysql
      restart: always
      environment:
        MYSQL_ROOT_PASSWORD: <root password> 
@@ -407,7 +407,7 @@ services:
          WORDPRESS_DB_USER: <username>
          WORDPRESS_DB_PASSWORD: <password>
  volumes:   
-    db\_data:
+    db_data:
 ```
 
 ## Instance Tenant ID and Name
@@ -500,8 +500,8 @@ errors, we start troubleshooting by looking at the Frontend table.
 AntaresIISLogFrontEndTable
 | where PreciseTimeStamp >= datetime(2018-06-17 10:25:00) and
 PreciseTimeStamp <= datetime(2018-06-17 10:40:00)
-| where Cs\_host =~ "tctomcatimg.azurewebsites.net"
-| where User\_agent \!= "AlwaysOn"
+| where Cs_host =~ "tctomcatimg.azurewebsites.net"
+| where User_agent != "AlwaysOn"
 | project PreciseTimeStamp, Cs_uri_stem, Sc_status, Sc_substatus,
 Sc_win32_status, Time_taken, WorkerHttpStatus, ServerRouted,
 SourceMoniker
