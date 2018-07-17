@@ -121,7 +121,7 @@ Note that the repository name must be all lowercase.
 
 The image specified in the ``FROM`` instruction is referred to as the *parent image* of your image. You'll sometimes see people (including Docker documentation) refer to it as the *base image*, but technically, it's not the base image.
 
-> **Cross-Ref:** See **The Chicken or the Egg - Parent and Base Images** later in this module for more details.
+> **Cross-Ref:** See [**The Chicken or the Egg - Parent and Base Images**](#the-chicken-or-the-egg---parent-and-base-images) later in this module for more details.
 
 If your Dockerfile contains nothing else other than this single ``FROM``
 instruction, your image will be a duplicate of the Ubuntu image.
