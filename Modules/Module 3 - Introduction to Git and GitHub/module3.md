@@ -151,7 +151,7 @@ To clone the repository, change into the local directory where you want
 the repository to be created and run the following command.
 
 ```    
-git clone https://github.com/*\<username\>*/*\<repository\_name\>*
+git clone https://github.com/username/repository_name
 ```
 
 If the central repository is located on a server instead of GitHub, the
@@ -159,7 +159,7 @@ command would use SSH to point to the central repository. Here's an
 example.
 
 ```
-git clone ssh://*username*@*server\_name*/*path*/*repository*.git
+git clone ssh://username@server_name/path/repository.git
 ```
 
 Once you clone the central repository, you'll have a local copy of all
