@@ -476,7 +476,7 @@ You'll be redirected to GitHub where you'll want to click on **Authorize
 Docker** to complete the connection. (If you aren't logged into GitHub,
 you'll be prompted to do that first.)
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing GitHub")
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing Docker")
 
 Now you can click on Create, Create Automated Build again and you'll see
 the option to create an auto-build from GitHub.
