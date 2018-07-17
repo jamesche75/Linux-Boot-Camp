@@ -54,7 +54,7 @@ that tells Docker how to build the image. The context is one or more
 files located at a path or a
 URL.
 
-> **Cross-Ref:** See **The Dockerfile** later in this module for details on what is contained in a Dockerfile.
+> **Cross-Ref:** See [**The Dockerfile**](#the-dockerfile) later in this module for details on what is contained in a Dockerfile.
 
 The path can point to a specific directory, but it can also simply be a
 period. When using a period as the path, the context will consist of all
