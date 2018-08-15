@@ -396,6 +396,8 @@ $ docker build -t jimsubuntu:v1 . #build my image
 $ docker run -it jimsubuntu:v1 sh #run my image
 ```
 
+> **Note:** If you need to specify a port mapping, you can do that using the ``-p`` switch. However, make sure that you specify the ``-p`` switch before the image name. Otherwise, your port won’t be mapped into the container’s network and your image won’t work.
+
 After I run my image, I'll be sitting at a shell prompt. I'll install
 OpenSSH from that prompt.
 
