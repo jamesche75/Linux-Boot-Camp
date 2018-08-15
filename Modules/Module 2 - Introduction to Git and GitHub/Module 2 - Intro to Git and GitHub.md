@@ -1,4 +1,4 @@
-# Module 3: Intro to Git and GitHub
+# Module 2: Intro to Git and GitHub
 
 This module will introduce you to Git and GitHub. Because many
 developers who use our Linux offerings use Git and GitHub, it's
