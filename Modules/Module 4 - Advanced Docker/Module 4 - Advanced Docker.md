@@ -28,6 +28,8 @@ skill set in:
   - Using Dockerfiles and .dockerignore to automate tasks while building
     a Docker image.
 
+  - Run a Docker image in a Docker container and interact with that container.
+
   - Understanding Kubernetes and Docker Compose multi-container
     deployments.
 
@@ -46,7 +48,7 @@ are a few different ways to create a Docker image.
 
 In this module, we'll cover all these techniques.
 
-# Creating an Image Using docker build
+## Creating an Image Using docker build
 
 When you create a Docker image using ``docker build``, you provide Docker
 with a *Dockerfile* and a *build context*. A Dockerfile is a text file
@@ -97,7 +99,156 @@ context.
 
 > **Note:** You must have a Dockerfile in the path or in the root of your repository. Otherwise, you will see an error. 
 
-## The Dockerfile
+## Creating an Image Using ``docker commit``
+
+Once you run a Docker container, you can make changes to the container
+and then *commit* those changes to a new Docker image. For example, you
+might want to install OpenSSH and some other components into an Ubuntu
+container and then commit that to a new image. When the new image is
+run, the resulting container will include the components you installed.
+
+Here's an example of how this works.
+
+```
+$ docker build -t jimsubuntu:v1 . #build my image
+...
+$ docker run -it jimsubuntu:v1 sh #run my image
+```
+
+> **Note:** If you need to specify a port mapping, you can do that using the ``-p`` switch. However, make sure that you specify the ``-p`` switch before the image name. Otherwise, your port won’t be mapped into the container’s network and your image won’t work.
+
+After I run my image, I'll be sitting at a shell prompt. I'll install
+OpenSSH from that prompt.
+
+```
+# apt-get update
+...
+# apt-get install -y --no-install-recommends openssh-server
+```
+
+Once this install finishes, I can use ``docker commit`` to create a new
+Docker image with the changes I've made. However, first I'll need to get
+the name of the running container.
+
+```
+$ docker ps #show running containers
+CONTAINER ID IMAGE COMMAND STATUS            NAMES
+cd6f147957ca jimub "sh"    Up About a minute goofy_bardeen
+```
+
+(I have removed some of the output of this command.) When you run ``docker
+commit``, you can either use the container ID or the container name. I'm
+going to use the container name, ``goofy\_bardeen``.
+
+```
+$ docker commit goofy\_bardeen jimsubuntu:v2
+```
+
+When I run this, I'll end up with a new Docker image called
+jimsubuntu:v2 that contains the contents of the original Docker image,
+plus any changes I made to the running
+container.
+
+> **Note:** The name "goofy\_bardeen" was given to the container by the Docker daemon because I didn't explicitly give it a name when I started it.
+
+Using ``docker commit`` has some serious drawback. The primary drawback is that the Docker image it creates isn't really maintainable. Suppose you wanted to change the parent image for your newly created Docker image. You can't, because there isn't a Dockerfile to edit. 
+
+It's also important to note that a Dockerfile can contain valuable documentation of how a Docker image is created. (Of course, this relies on the Dockerfile author actually writing a well-documented Dockerfile.) If you use ``docker commit`` to create an image, you lose that benefit. 
+
+Given those drawbacks, why would you ever want to use ``docker commit``? You may want to change something minor in an image for testing purposes, and ``docker commit`` is a good choice for that. As a general rule, if you are building an image that you intend to use more than once, use a Dockerfile instead of ``docker commit``.
+
+## Using an Automated Build with Docker Hub and GitHub
+
+Running Docker from the command line is a great way to get more familiar
+with how everything works. It's also the preferred way for many people
+because it gives them complete control. However, it's not the most
+efficient workflow.
+
+If a customer is using GitHub, it's quite easy to configure an automated
+build in Docker Hub so that when new code changes are pushed to the
+repo, a new Docker image is built automatically. Combine this workflow
+with continuous integration in Web App for Containers and you have an
+efficient and automated process of building your images.
+
+### Step 1: Create GitHub Repository
+
+The first step is to add your files (including your Dockerfile) into a
+GitHub repository. You can use the Git command line or GitHub Desktop to
+easily add your files.
+
+### Step 2: Link Your GitHub Account to Docker Hub
+
+Next, you'll need to link your GitHub account to Docker Hub. To do that,
+first click on **Create**, **Create** **Automated Build** in Docker Hub
+as shown below.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig1_CreateAutomatedBuild.png "Creating an Automated Build")
+
+Then you'll need to click on **Link Accounts** to link your GitHub
+account.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig2_LinkAccount.png "Linking Your Account")
+
+Next, you'll click on **Link Github** to link your GitHub account to
+Docker Hub.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig3_LinkGitHub.png "Link to GitHub")
+
+Next, you'll choose between **Public and Private** or **Limited
+Access**. **Public and Private** is recommended.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig4_Access.png "Setting Access Level")
+
+You'll be redirected to GitHub where you'll want to click on **Authorize
+Docker** to complete the connection. (If you aren't logged into GitHub,
+you'll be prompted to do that first.)
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing Docker")
+
+Now you can click on **Create**, **Create Automated Build** again and you'll see
+the option to create an auto-build from GitHub.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig6_CreateAutomatedBuild.png "Create Automated Build")
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig7_CreateGitHub.png "Create from GitHub")
+
+Click on the GitHub repository that you want to use for your Docker
+image.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig8_ChooseRepo.png "Choose Repo")
+
+Give your automated build a short description and then click on
+**Create** to create your Docker Hub repository linked to the GitHub
+repository.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig9_Create.png "Creating the Build")
+
+At this point, if you push new changes to your GitHub repository, a new
+Docker image will be created. However, if you want to create a Docker
+image from the files currently in the GitHub repository, you'll need to
+manually trigger your first build.
+
+Click on **Build Settings** in Docker Hub and then click on **Trigger**
+to trigger a build.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig10_Trigger.png "Trigger the Build")
+
+You can view the status of your build by clicking on **Build Details**.
+Note that the build status isn't updated in real-time, so you'll need to
+click on **Build Details** to refresh the status.
+
+![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig11_BuildDetails.png "Build Details")
+
+Note that after the initial build, you will not have to manually trigger
+a build. The automated build will automatically trigger when you push
+changes to your GitHub
+repository.
+
+> **Note:** You should also configure CI/CD in Web App for Containers at this point. See **Module 5 - App Service and Linux** for more details.
+
+We'll go into the details of how you run a Docker container in the [**Running a Container**](#running-a-container) section. Before we do that, let's look at what a Dockerfile is.
+
+# The Dockerfile
 
 As stated earlier, a Dockerfile is simply a text file that contains the
 information necessary to build an image. A Dockerfile consists of one or
@@ -106,7 +257,7 @@ image.
 
 > **Note:** Your Dockerfile cannot be empty. If it is, an error will occur when you try to build your image. 
 
-### The FROM Instruction
+## The FROM Instruction
 
 Your Dockerfile must have at least one ``FROM`` instruction. The ``FROM``
 instruction specifies the image your Docker image is based upon. For
@@ -133,7 +284,7 @@ section.)
 
 > **Note:** Docker recommends the Alpine image as a parent image. It's lightweight and has a complete package index, so it's easy to add what you want without too much overhead.
 
-### The Chicken or the Egg - Parent and Base Images
+## The Chicken or the Egg - Parent and Base Images
 
 If you're really paying attention, you might be asking a question at
 this point. If you *must* have a ``FROM`` instruction, how did the creator
@@ -157,7 +308,7 @@ created by including a Dockerfile without a ``FROM`` instruction. This is
 untrue. Docker requires your Dockerfile have at least one ``FROM``
 instruction.
 
-### Multiple Parents
+## Multiple Parents
 
 Your image can have (and often will have) more than one parent image.
 For example, suppose you not only want to create an image based on the
@@ -174,7 +325,7 @@ The "#" character you see in the above example is a comment character.
 Anything that appears after the "#" is considered a comment. This is an
 excellent way to document your Dockerfiles.
 
-### Adding Files from the Context
+## Adding Files from the Build Context
 
 As you learned earlier, when you run ``docker build``, Docker transfers the
 files in the context to the Docker daemon. What you might not have
@@ -205,7 +356,7 @@ directory in my image. The ``ADD`` instruction, on the other hand, will
 auto-extract the bigfiles.tar.xz file into the bigfiles directory in my
 image.
 
-### Running Commands
+## Running Commands
 
 Another common instruction used in Dockerfiles is the ``RUN`` instruction.
 The ``RUN`` instruction runs a command. This is commonly used to install
@@ -229,7 +380,7 @@ When the ``RUN`` instruction is used, the command is executed in a new layer on 
 
 It's important to understand that instructions in the Dockerfile are *not* executed on the OS after the Docker container is running. The Dockerfile is used solely to instruct the Docker daemon how to build the image.
 
-### Exposing Ports
+## Exposing Ports
 
 App Service apps are all web-based, so your containers will need to
 expose a port to the outside world so users can access it. You use the
@@ -243,7 +394,7 @@ In the snippet above, two ports are exposed; 80 and 2222. You'll
 commonly see this in App Service because custom containers need to
 expose port 2222 if they want to use web-based SSH.
 
-### Setting Environment Variables
+## Setting Environment Variables
 
 If you need to set environment variables in your image, use the ``ENV``
 instruction.
@@ -256,7 +407,7 @@ The snippet shown will add ``/usr/local/nginx/bin`` to the existing ``PATH``
 environment variable in the image. Like the ``RUN`` instruction, the ``ENV``
 instruction creates a new layer.
 
-### Executing Commands on Container Start
+## Executing Commands on Container Start
 
 When a container starts, something needs to run so that it can be used.
 For example, if your container runs Ubuntu, you will want to run Bash
@@ -331,7 +482,7 @@ work. Also, I'm using a wildcard here, and since wildcards are evaluated
 by the shell, that won't work either. This is an example of a subtle
 problem you might encounter.
 
-### Initialization Scripts
+## Initialization Scripts
 
 It's common for a developer to want to run many commands when a
 container is started. An initialization shell script is a common method
@@ -380,146 +531,40 @@ folder.
 
 For more information on the .dockerignore file, see https://docs.docker.com/engine/reference/builder/\#dockerignore-file. 
 
-# Creating an Image Using ``docker commit``
+# Running a Container
 
-Once you run a Docker container, you can make changes to the container
-and then *commit* those changes to a new Docker image. For example, you
-might want to install OpenSSH and some other components into an Ubuntu
-container and then commit that to a new image. When the new image is
-run, the resulting container will include the components you installed.
+Once you've created a Docker image, you can use ``docker run`` to run a container from that image. In this section, we'll look at how to run a container, and how you can interact with that container after it's running.
 
-Here's an example of how this works.
+## Using ``docker run``
+To run a Docker container, you use the ``docker run`` command. When you run this command, Docker will check to see if the Docker image needed for the container is on the local machine. If it's not, Docker will automatically do a ``docker pull`` to download and extract the image. 
 
-```
-$ docker build -t jimsubuntu:v1 . #build my image
-...
-$ docker run -it jimsubuntu:v1 sh #run my image
-```
+Once the image is available on the local machine, Docker will create a Docker container and run it using the parameters that you passed to ``docker run``. 
 
-> **Note:** If you need to specify a port mapping, you can do that using the ``-p`` switch. However, make sure that you specify the ``-p`` switch before the image name. Otherwise, your port won’t be mapped into the container’s network and your image won’t work.
+As you've already seen, a Docker image developer can specify many settings to be used by the image. These settings can be thought of as the *default* settings for a container derived from the image. When you use ``docker run``, you can override these settings using options passed to ``docker run``.
 
-After I run my image, I'll be sitting at a shell prompt. I'll install
-OpenSSH from that prompt.
+Here's a very basic ``docker run`` command that starts a container based on an image named *mycoolimage* with a tag of *latest*.
 
-```
-# apt-get update
-...
-# apt-get install -y --no-install-recommends openssh-server
-```
+``docker run -it mycoolimage:latest``
 
-Once this install finishes, I can use ``docker commit`` to create a new
-Docker image with the changes I've made. However, first I'll need to get
-the name of the running container.
+When this command runs, a new Docker container is created on the machine and then it's started. Once it's started, it's considered to be in a running state. You can use the ``docker ps`` command to see a running container as shown in the figure below.
 
-```
-$ docker ps #show running containers
-CONTAINER ID IMAGE COMMAND STATUS            NAMES
-cd6f147957ca jimub "sh"    Up About a minute goofy_bardeen
-```
+![Running Docker Containers](images/docker_ps.png)
 
-(I have removed some of the output of this command.) When you run ``docker
-commit``, you can either use the container ID or the container name. I'm
-going to use the container name, ``goofy\_bardeen``.
+In the ``docker ps`` output shown above, you can see the the following columns.
 
-```
-$ docker commit goofy\_bardeen jimsubuntu:v2
-```
+- **Container ID** - Partial output of the unique hash that identifies the container.
+- **Image** - Image name or a partial output of the unique hash that identifies the image from which the container is derived.
+- **Command** - The command that was executed when the container started. 
+- **Created** - How long ago the container was *created*. Remember, when you use ``docker run``, Docker both *creates* and *runs* a container. 
+- **Status** - The current status of the container. If you run ``docker ps`` with no other options, you will only see running containers, so this column tells you how long it's been running.
+- **Ports** - Any port mappings for your container. 
+- **Names** - You can give the container a name when you use ``docker run``, but if you don't, Docker assigns a name for you.
 
-When I run this, I'll end up with a new Docker image called
-jimsubuntu:v2 that contains the contents of the original Docker image,
-plus any changes I made to the running
-container.
+It's possible that a Docker container that's previously been running on the machine is no longer running. In that case, you will need to run ``docker ps -a`` to see it. 
 
-> **Note:** The name "goofy\_bardeen" was given to the container by the Docker daemon because I didn't explicitly give it a name when I started it.
+> **Note:** You can use ``docker start`` to start a container that's currently not running.
 
-# Using an Automated Build with Docker Hub and GitHub
 
-Running Docker from the command line is a great way to get more familiar
-with how everything works. It's also the preferred way for many people
-because it gives them complete control. However, it's not the most
-efficient workflow.
-
-If a customer is using GitHub, it's quite easy to configure an automated
-build in Docker Hub so that when new code changes are pushed to the
-repo, a new Docker image is built automatically. Combine this workflow
-with continuous integration in Web App for Containers and you have an
-efficient and automated process of building your images.
-
-## Step 1: Create GitHub Repository
-
-The first step is to add your files (including your Dockerfile) into a
-GitHub repository. You can use the Git command line or GitHub Desktop to
-easily add your files.
-
-## Step 2: Link Your GitHub Account to Docker Hub
-
-Next, you'll need to link your GitHub account to Docker Hub. To do that,
-first click on **Create**, **Create** **Automated Build** in Docker Hub
-as shown below.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig1_CreateAutomatedBuild.png "Creating an Automated Build")
-
-Then you'll need to click on **Link Accounts** to link your GitHub
-account.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig2_LinkAccount.png "Linking Your Account")
-
-Next, you'll click on **Link Github** to link your GitHub account to
-Docker Hub.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig3_LinkGitHub.png "Link to GitHub")
-
-Next, you'll choose between **Public and Private** or **Limited
-Access**. **Public and Private** is recommended.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig4_Access.png "Setting Access Level")
-
-You'll be redirected to GitHub where you'll want to click on **Authorize
-Docker** to complete the connection. (If you aren't logged into GitHub,
-you'll be prompted to do that first.)
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing Docker")
-
-Now you can click on **Create**, **Create Automated Build** again and you'll see
-the option to create an auto-build from GitHub.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig6_CreateAutomatedBuild.png "Create Automated Build")
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig7_CreateGitHub.png "Create from GitHub")
-
-Click on the GitHub repository that you want to use for your Docker
-image.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig8_ChooseRepo.png "Choose Repo")
-
-Give your automated build a short description and then click on
-**Create** to create your Docker Hub repository linked to the GitHub
-repository.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig9_Create.png "Creating the Build")
-
-At this point, if you push new changes to your GitHub repository, a new
-Docker image will be created. However, if you want to create a Docker
-image from the files currently in the GitHub repository, you'll need to
-manually trigger your first build.
-
-Click on **Build Settings** in Docker Hub and then click on **Trigger**
-to trigger a build.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig10_Trigger.png "Trigger the Build")
-
-You can view the status of your build by clicking on **Build Details**.
-Note that the build status isn't updated in real-time, so you'll need to
-click on **Build Details** to refresh the status.
-
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig11_BuildDetails.png "Build Details")
-
-Note that after the initial build, you will not have to manually trigger
-a build. The automated build will automatically trigger when you push
-changes to your GitHub
-repository.
-
-> **Note:** You should also configure CI/CD in Web App for Containers at this point. See **Module 5 - App Service and Linux** for more details.
 
 # Multi-Container Deployments
 
