@@ -182,46 +182,46 @@ Next, you'll need to link your GitHub account to Docker Hub. To do that,
 first click on **Create**, **Create** **Automated Build** in Docker Hub
 as shown below.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig1_CreateAutomatedBuild.png "Creating an Automated Build")
+![alt text](images/Fig1_CreateAutomatedBuild.png "Creating an Automated Build")
 
 Then you'll need to click on **Link Accounts** to link your GitHub
 account.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig2_LinkAccount.png "Linking Your Account")
+![alt text](images/Fig2_LinkAccount.png "Linking Your Account")
 
 Next, you'll click on **Link Github** to link your GitHub account to
 Docker Hub.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig3_LinkGitHub.png "Link to GitHub")
+![alt text](images/Fig3_LinkGitHub.png "Link to GitHub")
 
 Next, you'll choose between **Public and Private** or **Limited
 Access**. **Public and Private** is recommended.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig4_Access.png "Setting Access Level")
+![alt text](images/Fig4_Access.png "Setting Access Level")
 
 You'll be redirected to GitHub where you'll want to click on **Authorize
 Docker** to complete the connection. (If you aren't logged into GitHub,
 you'll be prompted to do that first.)
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig5_Authorize.png "Authorizing Docker")
+![alt text](images/Fig5_Authorize.png "Authorizing Docker")
 
 Now you can click on **Create**, **Create Automated Build** again and you'll see
 the option to create an auto-build from GitHub.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig6_CreateAutomatedBuild.png "Create Automated Build")
+![alt text](images/Fig6_CreateAutomatedBuild.png "Create Automated Build")
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig7_CreateGitHub.png "Create from GitHub")
+![alt text](images/Fig7_CreateGitHub.png "Create from GitHub")
 
 Click on the GitHub repository that you want to use for your Docker
 image.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig8_ChooseRepo.png "Choose Repo")
+![alt text](images/Fig8_ChooseRepo.png "Choose Repo")
 
 Give your automated build a short description and then click on
 **Create** to create your Docker Hub repository linked to the GitHub
 repository.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig9_Create.png "Creating the Build")
+![alt text](images/Fig9_Create.png "Creating the Build")
 
 At this point, if you push new changes to your GitHub repository, a new
 Docker image will be created. However, if you want to create a Docker
@@ -231,13 +231,13 @@ manually trigger your first build.
 Click on **Build Settings** in Docker Hub and then click on **Trigger**
 to trigger a build.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig10_Trigger.png "Trigger the Build")
+![alt text](images/Fig10_Trigger.png "Trigger the Build")
 
 You can view the status of your build by clicking on **Build Details**.
 Note that the build status isn't updated in real-time, so you'll need to
 click on **Build Details** to refresh the status.
 
-![alt text](https://github.com/jamesche75/Linux-Boot-Camp/blob/master/Modules/Module%204%20-%20Advanced%20Docker/images/Fig11_BuildDetails.png "Build Details")
+![alt text](images/Fig11_BuildDetails.png "Build Details")
 
 Note that after the initial build, you will not have to manually trigger
 a build. The automated build will automatically trigger when you push
@@ -548,7 +548,7 @@ Here's a very basic ``docker run`` command that starts a container based on an i
 
 When this command runs, a new Docker container is created on the machine and then it's started. Once it's started, it's considered to be in a running state. You can use the ``docker ps`` command to see a running container as shown in the figure below.
 
-![Running Docker Containers](images/docker_ps.png)
+![alt text](images/docker_ps.png "List Docker Containers")
 
 In the ``docker ps`` output shown above, you can see the the following columns.
 
@@ -563,6 +563,49 @@ In the ``docker ps`` output shown above, you can see the the following columns.
 It's possible that a Docker container that's previously been running on the machine is no longer running. In that case, you will need to run ``docker ps -a`` to see it. 
 
 > **Note:** You can use ``docker start`` to start a container that's currently not running.
+
+## Common ``docker run`` Options
+Many (but not all) of the options for ``docker run`` are used to override many of the settings the image developer configured in the Dockerfile. For that reason, there are a *lot* of options available to you. In fact, ``docker run`` has more options than any other command.
+
+> **Note:** The only Dockerfile instructions that cannot be overridden in ``docker run`` are FROM, MAINTAINER, RUN, and ADD. Everything else has an option in ``docker run`` that can be used to override it. 
+
+The format for ``docker run`` is:
+
+``docker run [OPTIONS] IMAGE[:TAG] [COMMAND] [ARG . . .]``
+
+The only required parameter is the image name. It's important to note that any options you use are specified *before* the image. Otherwise, those options become part of the command, and you'll get unexpected results.
+
+If you specify a COMMAND in ``docker run``, it overrides the CMD instruction from the Dockerfile. If there is an ENTRYPOINT in the Dockerfile, COMMAND will be appended as an argument to the ENTRYPOINT, provided you're using the exec form of ENTRYPOINT.
+
+Here are some of the more common options used with ``docker run``.
+
+| Option       | Description                                     |
+| ------------ | ----------------------------------------------- |
+| -d           | Start container in *detached* mode.             |
+| -a           | Attach to STDIN, STDOUT, and/or STDERR.         |
+| -i           | Start container in interactive mode.            |
+| -t           | Allocate a TTY for the container.               |
+| --name       | Specify a name for the container.               |
+| --dns        | Set custom DNS servers for the container.       |
+| --restart    | Specified the restart policy for the container. |
+| -p           | Publishes a port to the host OS interfaces.     |
+| --entrypoint | Used to override ENTRYPOINT in a Dockerfile.    |
+| --expose     | ADDs to any ports exposed with EXPOSE.          |
+| --link       | Adds a link to another container.               |
+| -e           | Set (or override) environment variables.        |
+
+When you start a container detached, the container will exit when the process that runs the container exits unless you also use the ``--rm`` option. This is important to keep in mind because it can cause your container to start and immediately stop.
+
+If you want to start a Docker container and have access to a terminal session in that container, you should start the container using the ``-i`` and ``-t`` options. You can combine these two options as shown below.
+
+``docker run -it myimage``
+
+If the Dockerfile for ``myimage`` doesn't run a shell, you can also specify a command like so.
+
+``docker run -it myimage /bin/bash``
+
+When this runs, the container will be started and you'll be presented with a command prompt running in the container. 
+
 
 
 
