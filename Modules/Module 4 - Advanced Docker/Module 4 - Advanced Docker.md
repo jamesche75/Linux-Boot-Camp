@@ -606,6 +606,7 @@ If the Dockerfile for ``myimage`` doesn't run a shell, you can also specify a co
 
 When this runs, the container will be started and you'll be presented with a command prompt running in the container. 
 
+## Interacting with a Running Container
 
 
 
