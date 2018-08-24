@@ -608,7 +608,41 @@ When this runs, the container will be started and you'll be presented with a com
 
 ## Interacting with a Running Container
 
+Once a Docker container is running, you can interact with it by executing commands in it, copying files between the host OS and the container, and attaching to STDIN/STDOUT/STDERR.
 
+### ``docker exec``
+
+You can use ``docker exec`` to run a command in a running container. The command that you run must be an exectuable and not a quoted command. For example, to run ``/bin/bash`` in a running container called *webapp_php*, you could run the following command.
+
+``docker exec -it webapp_php /bin/bash``
+
+This will take you to an interactive command prompt inside of the container. 
+
+### ```docker cp```
+
+There may be times when you need to copy a file from a running container to the host OS or from the host OS to the running container. The ``docker cp`` command allows you to do just that. 
+
+> **Note:** You can copy files to and from a container even if the container is stopped.
+
+To reference the file system inside of a container, you use the *``container_name:path``* syntax. For example, if you have a container named webapp_php running an Apache web server, and you want to copy the web server log to c:\logs, you can run the following command.
+
+``docker cp webapp_php:/var/log/httpd-access.log c:logs\logfile.log``
+
+Keep in mind that Docker containers are temporary entities. If you copy a file into a container, the file that you copied into it will be gone if the container is recreated. See **Container Lifecycle Considerations** later in this module for more information.
+
+> **Note:** If you see a "permission denied" error when running ``docker cp``, it's likely because you don't have permissions on the client. Try running ``sudo docker cp`` instead.
+
+### ``docker attach``
+
+When you use ``docker run`` without the ``-d`` option, you won't be returned to a command prompt once the container starts. Instead, your command prompt will remain attached to the container, and you'll see STDIN/STDOUT/STDERR streams inside of your terminal window. This can be quite helpful when you're troubleshooting a container. 
+
+If you did use ``-d`` when you started the container, you can still attach to the container and see STDIN/STDOUT/STDERR by using ``docker attach``. To attach to a running container named webapp_php, you would use the following command.
+
+``docker attach webapp_php``
+
+> **Note:** ``docker attach`` shows you the streams from the process that was executed with ENTRYPOINT or CMD. 
+
+You can press Ctrl+C to return to a command prompt, but doing so will stop the container. Docker documentation states that you can press Ctrl+P+Q to detach and leave the container running, but that actually won't work unless the container was created via ``docker run -it``.
 
 # Multi-Container Deployments
 
