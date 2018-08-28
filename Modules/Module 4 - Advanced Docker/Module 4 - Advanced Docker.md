@@ -546,7 +546,11 @@ Here's a very basic ``docker run`` command that starts a container based on an i
 
 ``docker run -it mycoolimage:latest``
 
-When this command runs, a new Docker container is created on the machine and then it's started. Once it's started, it's considered to be in a running state. You can use the ``docker ps`` command to see a running container as shown in the figure below.
+When this command runs, a new Docker container is created on the machine and then it's started. Once it's started, it's considered to be in a running state. 
+
+> **Note:** You can also use ``docker create`` and ``docker start`` separately to start and run a container. Using ``docker run`` simply does both for you with one command.
+
+You can use the ``docker ps`` command to see a running container as shown in the figure below.
 
 ![alt text](images/docker_ps.png "List Docker Containers")
 
@@ -607,7 +611,39 @@ If the Dockerfile for ``myimage`` doesn't run a shell, you can also specify a co
 When this runs, the container will be started and you'll be presented with a command prompt running in the container. 
 
 ## Interacting with a Running Container
+Once your container is running, you can interact with it in various ways. You can run commands in the container, you can stop the container, you can restart the container, you can copy files to and from the container, and so forth.
 
+### Running Commands in a Container
+
+If you started your container in detached mode (using ``-d``), you can attach to it by running the following command.
+
+``docker attach CONTAINER``
+
+However, depening on how the container was started, you might not get what you expect. For example, if it wasn't started with a TTY, you won't be able to interact with the command prompt after running ``docker attach``. For that reason, it's usually best to use ``docker exec`` instead.
+
+When you use ``docker exec``, you can specify the command you want to run inside of the container, along with some options. Here's the format for ``docker exec``.
+
+``docker exec [OPTIONS] CONTAINER [ARGS]``
+
+Consider the following partial output of ``docker ps``.
+
+![alt text](images/dockerps_exec.png "A Running Container")
+
+If I wanted to get an interactive command prompt inside of this container, I can do that by running the following command.
+
+``docker exec -it ae /bin/bash``
+
+This will give me a Bash command prompt inside of the container, and because I used the ``-it`` option, that interactive command prompt also makes a TTY available so that I can see output from it. 
+
+> **Note:** Remember, you don't have to enter the entire container ID when using ``docker`` commands. You only have to enter enough characters so that Docker can uniquely identify the container. 
+
+Note that the commands you use with ``docker exec`` don't have to be interactive commands. For example, the following command creates a new file called ``myapp.log`` in the /var/log directory. 
+
+``docker exec -d ae touch /var/log/myapp.log``
+
+> **Note:** When you run commands using ``docker exec`` in the background (using the ``-d`` option), you won't get any ouput from the command. In other words, if there is an error, you won't see it. 
+
+### Stopping and Starting Containers
 
 
 # Multi-Container Deployments
