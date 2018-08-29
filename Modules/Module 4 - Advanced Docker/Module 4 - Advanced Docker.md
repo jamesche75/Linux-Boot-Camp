@@ -35,7 +35,7 @@ skill set in:
 
 # Docker Images
 
-Before you can start a Docker container, you need a Docker image. There
+Before you can create a Docker container, you need a Docker image. There
 are a few different ways to create a Docker image.
 
   - You can use docker build to create an image using a *Dockerfile*.
@@ -151,7 +151,7 @@ container.
 
 > **Note:** The name "goofy\_bardeen" was given to the container by the Docker daemon because I didn't explicitly give it a name when I started it.
 
-Using ``docker commit`` has some serious drawback. The primary drawback is that the Docker image it creates isn't really maintainable. Suppose you wanted to change the parent image for your newly created Docker image. You can't, because there isn't a Dockerfile to edit. 
+Using ``docker commit`` has some serious drawbacks. The primary drawback is that the Docker image it creates isn't really maintainable. Suppose you wanted to change the parent image for your newly created Docker image. You can't because there isn't a Dockerfile to edit. 
 
 It's also important to note that a Dockerfile can contain valuable documentation of how a Docker image is created. (Of course, this relies on the Dockerfile author actually writing a well-documented Dockerfile.) If you use ``docker commit`` to create an image, you lose that benefit. 
 
@@ -268,7 +268,7 @@ Docker Hub, your Dockerfile would start with:
 FROM ubuntu
 ```
 
-Note that the repository name must be all lowercase.
+> **Note:** The repository name must be all lowercase.
 
 The image specified in the ``FROM`` instruction is referred to as the *parent image* of your image. You'll sometimes see people (including Docker documentation) refer to it as the *base image*, but technically, it's not the base image.
 
@@ -310,11 +310,7 @@ instruction.
 
 ## Multiple Parents
 
-Your image can have (and often will have) more than one parent image.
-For example, suppose you not only want to create an image based on the
-Ubuntu image, but you also want that image to have Apache included in
-it. To accomplish that, your Dockerfile might have the following ``FROM``
-instructions.
+Your image can have more than one parent image. For example, suppose you not only want to create an image based on the Ubuntu image, but you also want that image to have Apache included in it. To accomplish that, your Dockerfile might have the following ``FROM`` instructions.
 
 ```
 FROM ubuntu
@@ -331,8 +327,7 @@ As you learned earlier, when you run ``docker build``, Docker transfers the
 files in the context to the Docker daemon. What you might not have
 realized is the transfer of these files simply makes them available to
 the Docker daemon. It doesn't copy any of those files into your Docker
-image. To add files from the context into your image, you need
-instructions in your Dockerfile.
+image. 
 
 To add files from the context to your image, you can use the ``ADD`` or ``COPY``
 instruction. For example:
