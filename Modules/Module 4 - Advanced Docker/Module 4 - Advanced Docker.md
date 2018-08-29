@@ -569,6 +569,8 @@ folder.
 
 For more information on the .dockerignore file, see https://docs.docker.com/engine/reference/builder/\#dockerignore-file. 
 
+> **EXERCISE:** Complete **Lab 1 - Building a Docker Image**
+
 
 # Running a Container
 
@@ -673,6 +675,8 @@ As you can see, adding labels to your images will make it much easier to manage 
 
 > **Note:** You can use ``docker inspect IMAGE`` to see the labels that are applied to an image.
 
+> **EXERCISE:** Complete **Lab 2 - Running a Container**.
+
 ## Interacting with a Running Container
 Once your container is running, you can interact with it in various ways. You can run commands in the container, you can stop the container, you can restart the container, you can copy files to and from the container, and so forth.
 
@@ -739,6 +743,8 @@ To reference the file system inside of a container, you use the *``container_nam
 Keep in mind that Docker containers are temporary entities. If you copy a file into a container, the file that you copied into it will be gone if the container is recreated. See [**Container Lifecycle Considerations**](#container-lifecycle-considerations) later in this module for more information.
 
 > **Note:** If you see a "permission denied" error when running ``docker cp``, it's likely because you don't have permissions on the client. Try running ``sudo docker cp`` instead.
+
+> **EXERCISE:** Complete **Lab 3 - Interacting with a Container**.
 
 # Multi-Container Deployments
 

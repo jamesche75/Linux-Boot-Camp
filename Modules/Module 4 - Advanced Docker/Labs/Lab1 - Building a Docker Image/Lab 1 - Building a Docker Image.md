@@ -9,14 +9,11 @@ In this lab, you will complete the following exercises.
 ## Prerequisites:
 In order to complete this lab, you will need:
 
-* A [Docker Hub](http://www.dockerhub.com) (http://www.dockerhub.com) account. (It's free.)
 * An install of [Docker CE](https://www.docker.com/get-started) (https://www.docker.com/get-started). You can run this on any OS. The steps aren't OS-specific.
 * Download the contents of the Linux Boot Camp GitHub repository located at https://github.com/jamesche75/Linux-Boot-Camp. (Click **Clone or Download** and download it as a Zip file to your machine.)
 
 ### Optional: ###
 * [Visual Studio Code](https://code.visualstudio.com/download) (https://code.visualstudio.com/download) with the [Docker extension](https://code.visualstudio.com/docs/azure/docker) (https://code.visualstudio.com/docs/azure/docker).
-
-> **Note:** Screenshots in this lab were taken in Visual Studio Code with the Docker extension installed.
 
 ---
 
