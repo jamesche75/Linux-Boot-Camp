@@ -35,8 +35,9 @@ skill set in:
 
 # Docker Images
 
-Before you can create a Docker container, you need a Docker image. There
-are a few different ways to create a Docker image.
+Before you can create a Docker container, you need a Docker *image*. A Docker image is a compressed file that contains everything needed to run your application. 
+
+There are a few different ways to create a Docker image.
 
   - You can use docker build to create an image using a *Dockerfile*.
 
@@ -284,7 +285,7 @@ section.)
 
 > **Note:** Docker recommends the Alpine image as a parent image. It's lightweight and has a complete package index, so it's easy to add what you want without too much overhead.
 
-## The Chicken or the Egg - Parent and Base Images
+### The Chicken or the Egg - Parent and Base Images
 
 If you're really paying attention, you might be asking a question at
 this point. If you *must* have a ``FROM`` instruction, how did the creator
@@ -308,7 +309,7 @@ created by including a Dockerfile without a ``FROM`` instruction. This is
 untrue. Docker requires your Dockerfile have at least one ``FROM``
 instruction.
 
-## Multiple Parents
+### Multiple Parents
 
 Your image can have more than one parent image. For example, suppose you not only want to create an image based on the Ubuntu image, but you also want that image to have Apache included in it. To accomplish that, your Dockerfile might have the following ``FROM`` instructions.
 
@@ -320,6 +321,33 @@ FROM httpd # The Apache HTTP Server Project
 The "#" character you see in the above example is a comment character.
 Anything that appears after the "#" is considered a comment. This is an
 excellent way to document your Dockerfiles.
+
+### Parent Inheritance
+
+It's important to understand that your image will also inherit the parent of your parent image. Consider the following ``FROM`` instruction.
+
+```
+FROM nginx
+```
+If your Dockerfile contains nothing other than this, you can run a container using the image you create, and you'll see a response from Nginx if you browse to http://localhost:80. Given what you've already learned, should that really be possible? Remember, a Docker container is completely isolated from the host OS, so how does Nginx even run? After all, it needs an operating system to allocate resources and host the Nginx process, etc. 
+
+The answer to these questions is in parent inheritance. Let's look at the ``FROM`` instruction in the Dockerfile for the ``nginx`` image. Here it is, straight from Docker Hub.
+
+``FROM debian:stretch-slim``
+
+So we know that the ``nginx`` image uses the ``debian:stretch-slim`` image as a parent. That means that when we create a Docker image using ``nginx`` as our parent image, we also get what's included in the ``debian:stretch-slim`` image. In other words, a container that uses the ``nginx`` image is going to be running Debian 9 for an operating system. (Stretch is the codename for Debian 9.) 
+
+Now let's look at the Dockerfile for the ``debian:stretch-slim`` image. Here it is in its entirety.
+
+```
+FROM scratch
+ADD rootfs.tar.xz /
+CMD ["bash"]
+```
+
+You should understand completely what's happening here. The ``debian:stretch-slim`` image is a base image. (It's not based on a parent image.) When that image is created, they're just unzipping the contents of ``rootfs.tar.xz`` into the root directory in the container and running ``bash``. 
+
+It's important that you understand the concept of parent inheritance so that you can follow this chain and understand everything that might impact a container, but as you've seen, it's not rocket science. Once the covers are peeled away, it's actually pretty simple stuff.
 
 ## Adding Files from the Build Context
 
@@ -692,11 +720,11 @@ In some cases, ten seconds may not be enough time for an application to graceful
 
 ### Starting Containers
 
+To start a stopped container, use the ``docker start`` command. The format is simple.
 
+``docker start [OPTIONS] CONTAINER``
 
-
-
-
+If you want to attach to ``STDIN`` so that you can interact with the container, use the ``-i`` option just as you did with ``docker run`` earlier. You can also use the ``-a`` option if you want to attach to ``STDOUT`` and ``STDERR``.
 
 ### Copying Files to and from Containers
 
@@ -708,7 +736,7 @@ To reference the file system inside of a container, you use the *``container_nam
 
 ``docker cp webapp_php:/var/log/httpd-access.log c:logs\logfile.log``
 
-Keep in mind that Docker containers are temporary entities. If you copy a file into a container, the file that you copied into it will be gone if the container is recreated. See **Container Lifecycle Considerations** later in this module for more information.
+Keep in mind that Docker containers are temporary entities. If you copy a file into a container, the file that you copied into it will be gone if the container is recreated. See [**Container Lifecycle Considerations**](#container-lifecycle-considerations) later in this module for more information.
 
 > **Note:** If you see a "permission denied" error when running ``docker cp``, it's likely because you don't have permissions on the client. Try running ``sudo docker cp`` instead.
 
@@ -819,3 +847,25 @@ To delete a pod (and shut down the app), use ``kubectl delete``.
 ```
 $ kubectl delete pod JimsPod 
 ```
+## Container Lifecycle Considerations
+
+One of the most common problems customers have with Docker in Azure is a misunderstanding of the Docker container lifecycle. Some customers are new to Docker, and when they encounter these problems, they often attribute them to Azure. It's important that you understand the Docker container lifecycle so that you can reassure customers when they encounter problems related to it.
+
+### Container Creation
+
+As you learned earlier, a Docker image is a compressed file that contains everything needed to run your application. The first stage of a Docker container's lifecycle is container creation. This can happen using either ``docker create`` or ``docker run``. For our purposes, assume that we're using ``docker create`` to create the container.
+
+When a container is created using ``docker create``, the following happens.
+
+* The Docker image is downloaded from a Docker registry. 
+* The layers are extracted.
+* A Docker container is created based on the image.
+
+At this point, the container's official status is ``created``. During the creation of the container, Docker also initializes any volumes in the container. This is important because it means that you can create a container and use its volumes from a different container, even though the container hasn't been started.
+
+> **Note:** You learned earlier that you can copy files to or from a container even when it's stopped. Now you know why. Even though the container's not actually started, Docker has created the volumes.
+
+Just as with ``docker run``, there are a **lot** of options you can use with ``docker create``. We won't go into details on them in this training, but you can review them in the [official Docker documentation](https://docs.docker.com/engine/reference/commandline/create/#options).
+
+### Container Startup
+
