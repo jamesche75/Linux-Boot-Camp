@@ -67,13 +67,15 @@ You should see output similar to what you see in the figure below.
 
 ![alt text](images/docker_stop.png "Stopping a Container")
 
-If you run ``docker ps`` at this point, you should no longer see your container. The container's still on the machine, but it's no longer running. 
+2. Run ``docker ps`` from your command line. You should no longer see your container. The container's still on the machine, but it's no longer running. 
 
 > **Knowledge Check:** How can you remove the container from the machine completely? We're not going to use it again, so try it out!
 
+## Step 3: Recreating the Container
+
 Now we need to recreate the container with the correct network configuration. Docker creates the network bridge when the container is started, but we still can't use ``docker start`` with our existing container to fix this problem. That's because you set the configuration to use for the network in the ``docker create`` command. (In our case, we'll just do it in ``docker run`` because it allows us to do it in one step instead of two.)
 
-2. From your command prompt, run the following command:
+1. From your command prompt, run the following command:
 
    ``docker run -d -p 8000:80 mydockerimage:1.0``
 
@@ -81,7 +83,7 @@ The only difference between this command and the one you ran before is the ``-p`
 
 > **More Info:** Why did we use port 8000 instead of port 80? If you're doing this on a Windows machine, the Microsoft HTTP API will be listening on port 80, and that will cause a port conflict. If you're not doing this on a Windows machine, you could have used ``-p 80:80`` to map port 80.
 
-3. Open your web browser and browse to **http://localhost:8000/index.php**.
+2. Open your web browser and browse to **http://localhost:8000/index.php**.
 
 You should now see the PHPInfo output from Apache running in the container. 
 
