@@ -869,3 +869,35 @@ Just as with ``docker run``, there are a **lot** of options you can use with ``d
 
 ### Container Startup
 
+Once a container has been created, it must be started before you can run your application. You can start a container using ``docker start``. For more information on using ``docker start``, see [Starting Containers](#starting-containers) earlier in this module.
+
+When a container is started, it uses any options that were passed to ``docker create`` when it was created. For example, if you used the ``--entrypoint`` option with ``docker create`` to override the Docker image's entrypoint, the command you specify will run when ``docker start`` is run for the container.
+
+### Stopping Containers
+
+See [Stopping Containers](#stopping-containers) earlier in this module for details on stopping containers.
+
+### What Happens with  ``docker run``
+
+As stated earlier, when you use ``docker run``, the Docker container is both created and started. There are some other important things that happen when ``docker run`` is used.
+
+* The container's network is created and a network bridge is created.
+* An IP address is allocated for the container.
+* The container's process is executed.
+
+One of the most important aspects of this is the creation of the container's network. This can cause some confusion for customers who want to override DNS settings for a container. For example, consider the following snippet from a Dockerfile.
+
+```
+COPY resolv.conf /etc/resolv.conf
+```
+
+In this example, we're trying to change the DNS servers by putting our own resolv.conf file on the image. However, this actually won't work because the Docker daemon actually sets the DNS servers when it creates the network at the point that the container is started. 
+
+> **Note:** For information on how to set your own DNS servers, see the [Things You Should Know blog for Linux.](https://blogs.msdn.microsoft.com/waws/2017/09/08/things-you-should-know-web-apps-and-linux/#OverrideDNS)
+
+### Installing Components (a.k.a. Beating the Dead Horse)
+
+One thing about container lifecycle is critical to understand; if a container is removed or destroyed, when it is re-created, it is created from scratch and includes only what is included in the image on which it is based. If you install something in a container or copy file(s) to a container, they will not persist if the container is removed or destroyed.
+
+It's equally important to realize that you *can* install components or copy files to a container and then stop or pause the container. When the container is restarted, the components or files that you copied will still be there. This is because Docker creates the volumes for a container upon container *creation*, and the volumes persist until the container is removed or destroyed.
+
