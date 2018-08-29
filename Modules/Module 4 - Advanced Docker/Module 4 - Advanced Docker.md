@@ -499,6 +499,21 @@ ENTRYPOINT ["/bin/init.sh"]
 This is something you'll commonly see in App Service because our
 guidance on building custom images recommends it.
 
+## Using Labels with an Image
+
+Labels allow you to associate a key/value pair with your Docker image. Labels are considered metadata, and they're useful for categorizing images or for adding metadata (such as your company name) to an image.
+
+> **Note:** As you'll see later, Docker allows you to filter output of many Docker commands using labels.
+
+To add a label to a Docker image, use the ``LABEL`` instruction. In the following example, I'm adding several labels to an image.
+
+```
+LABEL version="1.0"
+LABEL "com.contoso.vendor"="Contoso Corporation"
+LABEL "com.contoso.title"="WordPress Website"
+```
+Labels that are defined in a parent image are inherited by your image. However, if you define a label using the same key, your label will override the label from the parent image. For that reason (and for others), the Open Container Initiative (OCI) has defined a set of rules and standardized pre-defined keys for labels, or *annotations* as they call them. You can find those in the [OCI's ``image-spec`` GitHub repository](https://github.com/opencontainers/image-spec/blob/master/annotations.md).
+
 ## Using .dockerignore
 
 As you've learned, when you build a Docker image, Docker sends the build
@@ -531,6 +546,7 @@ folder.
 
 For more information on the .dockerignore file, see https://docs.docker.com/engine/reference/builder/\#dockerignore-file. 
 
+
 # Running a Container
 
 Once you've created a Docker image, you can use ``docker run`` to run a container from that image. In this section, we'll look at how to run a container, and how you can interact with that container after it's running.
@@ -548,25 +564,7 @@ Here's a very basic ``docker run`` command that starts a container based on an i
 
 When this command runs, a new Docker container is created on the machine and then it's started. Once it's started, it's considered to be in a running state. 
 
-> **Note:** You can also use ``docker create`` and ``docker start`` separately to start and run a container. Using ``docker run`` simply does both for you with one command.
-
-You can use the ``docker ps`` command to see a running container as shown in the figure below.
-
-![alt text](images/docker_ps.png "List Docker Containers")
-
-In the ``docker ps`` output shown above, you can see the the following columns.
-
-- **Container ID** - Partial output of the unique hash that identifies the container.
-- **Image** - Image name or a partial output of the unique hash that identifies the image from which the container is derived.
-- **Command** - The command that was executed when the container started. 
-- **Created** - How long ago the container was *created*. Remember, when you use ``docker run``, Docker both *creates* and *runs* a container. 
-- **Status** - The current status of the container. If you run ``docker ps`` with no other options, you will only see running containers, so this column tells you how long it's been running.
-- **Ports** - Any port mappings for your container. 
-- **Names** - You can give the container a name when you use ``docker run``, but if you don't, Docker assigns a name for you.
-
-It's possible that a Docker container that's previously been running on the machine is no longer running. In that case, you will need to run ``docker ps -a`` to see it. 
-
-> **Note:** You can use ``docker start`` to start a container that's currently not running.
+You could use ``docker create`` and ``docker start`` separately to start and run a container. Using ``docker run`` simply does both for you with one command.
 
 ## Common ``docker run`` Options
 Many (but not all) of the options for ``docker run`` are used to override many of the settings the image developer configured in the Dockerfile. For that reason, there are a *lot* of options available to you. In fact, ``docker run`` has more options than any other command.
@@ -610,6 +608,48 @@ If the Dockerfile for ``myimage`` doesn't run a shell, you can also specify a co
 
 When this runs, the container will be started and you'll be presented with a command prompt running in the container. 
 
+## Listing Containers
+
+The ``docker ps`` command can be used to list containers. By default, ``docker ps`` will show only containers that are currently running. 
+
+The image below shows example output from ``docker ps``.
+
+![alt text](images/docker_ps.png "List Docker Containers")
+
+In the ``docker ps`` output shown above, you can see the the following columns.
+
+- **Container ID** - Partial output of the unique hash that identifies the container.
+- **Image** - Image name or a partial output of the unique hash that identifies the image from which the container is derived.
+- **Command** - The command that was executed when the container started. 
+- **Created** - How long ago the container was *created*. Remember, when you use ``docker run``, Docker both *creates* and *runs* a container. 
+- **Status** - The current status of the container. If you run ``docker ps`` with no other options, you will only see running containers, so this column tells you how long it's been running.
+- **Ports** - Any port mappings for your container. 
+- **Names** - You can give the container a name when you use ``docker run``, but if you don't, Docker assigns a name for you.
+
+If you want to see all Docker containers on the system, including those that were run previously and are no longer running, use the ``-a`` option. The following image shows the output of ``docker ps -a``.
+
+![alt text](images/dockerps_a.png "Viewing All Containers")
+
+Earlier you learned that you can apply metadata to your images using the ``LABEL`` instruction in your Dockerfile. You can filter the output of ``docker ps`` by labels using the following format.
+
+``docker ps -f label=KEY[=VALUE]``
+
+For example, to list only those containers with a ``com.contoso.vendor``, I can use the following command.
+
+``docker ps -f label="com.contoso.vendor"``
+
+I can also filter based on the value of the label. For example:
+
+``docker ps -f label="version"="1.0"``
+
+If I wanted to list all containers from Contoso that are also version 1.0, I can even pass multiple filters like so.
+
+``docker ps -f label="version"="1.0" -f label="com.contoso.vendor"``
+
+As you can see, adding labels to your images will make it much easier to manage and maintain them later. 
+
+> **Note:** You can use ``docker inspect IMAGE`` to see the labels that are applied to an image.
+
 ## Interacting with a Running Container
 Once your container is running, you can interact with it in various ways. You can run commands in the container, you can stop the container, you can restart the container, you can copy files to and from the container, and so forth.
 
@@ -637,27 +677,33 @@ This will give me a Bash command prompt inside of the container, and because I u
 
 > **Note:** Remember, you don't have to enter the entire container ID when using ``docker`` commands. You only have to enter enough characters so that Docker can uniquely identify the container. 
 
-Note that the commands you use with ``docker exec`` don't have to be interactive commands. For example, the following command creates a new file called ``myapp.log`` in the /var/log directory. 
+The commands you use with ``docker exec`` don't have to be interactive commands. For example, the following command creates a new file called ``myapp.log`` in the /var/log directory. 
 
 ``docker exec -d ae touch /var/log/myapp.log``
 
 > **Note:** When you run commands using ``docker exec`` in the background (using the ``-d`` option), you won't get any ouput from the command. In other words, if there is an error, you won't see it. 
 
-<<<<<<< HEAD
-### Stopping and Starting Containers
-=======
-Once a Docker container is running, you can interact with it by executing commands in it, copying files between the host OS and the container, and attaching to STDIN/STDOUT/STDERR.
->>>>>>> bd118666dfa8721a926dbe596a36fcc2cd4de9ce
+### Stopping Containers
 
-### ``docker exec``
+If you ever want to stop your container from running, you can use the ``docker stop`` command. This is helpful if you want to move your application to another host or if you want to migrate to a new version of an image. 
 
-You can use ``docker exec`` to run a command in a running container. The command that you run must be an exectuable and not a quoted command. For example, to run ``/bin/bash`` in a running container called *webapp_php*, you could run the following command.
+When you stop a container with ``docker stop``, Docker will send a ``SIGTERM`` signal to the main process in the container. (The main process is the process that was initially started in the container.) By default, if that process doesn't gracefully exit after 10 seconds, Docker will send a ``SIGKILL`` signal that will kill the process.
 
-``docker exec -it webapp_php /bin/bash``
+> **Note:** Docker uses ``SIGTERM`` first to give your application time to gracefully stop. 
 
-This will take you to an interactive command prompt inside of the container. 
+In some cases, ten seconds may not be enough time for an application to gracefully exit. In those cases, you can use the ``-t`` or ``--time`` option to tell Docker how long to wait between the ``SIGTERM`` and the ``SIGKILL`` signals. For example, the following command will stop a container named ``web_container``, and it will wait 30 seconds after sending the ``SIGTERM`` signal before it forefully kills the main process.
 
-### ```docker cp```
+``docker stop -t 30 web_container``
+
+### Starting Containers
+
+
+
+
+
+
+
+### Copying Files to and from Containers
 
 There may be times when you need to copy a file from a running container to the host OS or from the host OS to the running container. The ``docker cp`` command allows you to do just that. 
 
@@ -670,18 +716,6 @@ To reference the file system inside of a container, you use the *``container_nam
 Keep in mind that Docker containers are temporary entities. If you copy a file into a container, the file that you copied into it will be gone if the container is recreated. See **Container Lifecycle Considerations** later in this module for more information.
 
 > **Note:** If you see a "permission denied" error when running ``docker cp``, it's likely because you don't have permissions on the client. Try running ``sudo docker cp`` instead.
-
-### ``docker attach``
-
-When you use ``docker run`` without the ``-d`` option, you won't be returned to a command prompt once the container starts. Instead, your command prompt will remain attached to the container, and you'll see STDIN/STDOUT/STDERR streams inside of your terminal window. This can be quite helpful when you're troubleshooting a container. 
-
-If you did use ``-d`` when you started the container, you can still attach to the container and see STDIN/STDOUT/STDERR by using ``docker attach``. To attach to a running container named webapp_php, you would use the following command.
-
-``docker attach webapp_php``
-
-> **Note:** ``docker attach`` shows you the streams from the process that was executed with ENTRYPOINT or CMD. 
-
-You can press Ctrl+C to return to a command prompt, but doing so will stop the container. Docker documentation states that you can press Ctrl+P+Q to detach and leave the container running, but that actually won't work unless the container was created via ``docker run -it``.
 
 # Multi-Container Deployments
 
