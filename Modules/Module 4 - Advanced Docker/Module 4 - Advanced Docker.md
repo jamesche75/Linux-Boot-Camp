@@ -708,7 +708,7 @@ The commands you use with ``docker exec`` don't have to be interactive commands.
 
 ``docker exec -d ae touch /var/log/myapp.log``
 
-> **Note:** When you run commands using ``docker exec`` in the background (using the ``-d`` option), you won't get any ouput from the command. In other words, if there is an error, you won't see it. 
+When you run commands using ``docker exec`` in the background (using the ``-d`` option), you usually don't get any ouput from the command. In other words, if there is an error, you might not see it. The exception is if you specify a command that doesn't even exist.
 
 ### Stopping Containers
 
