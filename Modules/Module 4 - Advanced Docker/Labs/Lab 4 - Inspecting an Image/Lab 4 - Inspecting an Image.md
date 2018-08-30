@@ -28,7 +28,7 @@ We're going to use ``docker inspect`` against a PHP image. Before we do that, le
 
    ``docker images -a``
 
-   You probably see the PHP image we used as a parent, along with your **mydockerapp** image. However, you likely also see at least one image that's called ``<none>``. That image is an intermediate image, an image that was used in the building of the **mydockerapp** image. Having intermediate images hanging around doesn't harm anything, but we're going to remove that image, along with the other images on your machine so we start from scratch.
+   You probably see the PHP image we used as a parent, along with your **mydockerapp** image. However, you likely also see at least one image that's called ``<none>``. That image is an intermediate image, an image that was used in the building of the **mydockerapp** image. Having intermediate images hanging around doesn't harm anything, but we're going to remove that image along with the other images on your machine so we start from scratch.
 
    You can use ``docker rmi`` to remove Docker images, but we don't want to have to run ``docker rmi`` multiple times. Fortunately, there's a shortcut we can use to run ``docker rmi`` on all of the images returned by ``docker images``. 
 
