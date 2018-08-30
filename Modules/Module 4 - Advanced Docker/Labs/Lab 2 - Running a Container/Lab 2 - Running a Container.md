@@ -77,7 +77,7 @@ Now we need to recreate the container with the correct network configuration. Do
 
 1. From your command prompt, run the following command:
 
-   ``docker run -d -p 8000:80 mydockerimage:1.0``
+   ``docker run -d -p 8000:80 mydockerapp:1.0``
 
 The only difference between this command and the one you ran before is the ``-p`` option. We use the ``-p`` option to tell Docker what port to map from the host OS into the port that's listening in the container. 
 
