@@ -112,6 +112,43 @@ Let's confirm these things while learning a lot more about this image.
 
    Given that, how do you find out the parent image for this image? Simple. You have to look at the Dockerfile. We'll go into that more a little later in this lab.
 
-You can  
+You can use ``docker inspect`` to display only certain properties that you're interested in. To do that, you use the ``-f`` option and specify a *Go template*. That sounds more complicated than it really is, so let's look at an example. 
 
+3. From your command prompt, run the following command:
 
+   ``docker inspect -f='{{.Config.Cmd}}' IMAGE_ID``
+
+This will show you the CMD that's run from the Dockerfile. 
+
+> **Extra Credit**: Try some of the cool things you can do with Go templates that are outlined at https://container-solutions.com/docker-inspect-template-magic/.
+
+By the way, ``docker inspect`` doesn't just work for images. You can use it on containers as well.
+
+## Tracking Parent Inheritence
+
+As you saw earlier, you can't rely on ``docker inspect`` to find the parent for an image. Fortunately, if the image is on Dockerhub, you can look at the Dockerfile to find out what the ``FROM`` instruction says for the image. 
+
+> **Note**: If the image is not on Docker Hub, you'll have to go to the registry where the image is stored. However, when people are using images that they didn't create or that aren't owned by their company, it's almost certain that they're from Docker Hub.
+
+I said earlier that the PHP image we were pulling was running Debian 9. I based that off the tag for the image, but let's prove it. 
+
+1. Browse to http://dockerhub.com and log in with your Docker Hub account.
+2. In the search box at the top of the page, enter **php** and press **Enter**.
+
+The official PHP image should be at the top of the list. 
+
+3. Click **Details** on the far right side of the PHP image.
+
+Now you'll see a list of supported tags and the Dockerfile for each of them.
+
+4. Scroll down until you find **7.2.9-apache-stretch** and click on it. (It's probably not blue like a hyperlink, but it is a hyperlink.)
+
+This takes you to the Dockerfile that's stored in GitHub. As you can see, the ``FROM`` instruction says:
+
+``FROM debian:stretch-slim``
+
+So now you know that the parent image for this PHP image is the Debian Stretch-slim image. Debian Stretch is the codename for Debian 9, and *slim* means that it's a stripped down version of the OS. 
+
+Why would you need to know this? Well, if you want to run a shell prompt in a container running this image, you might need to know what the OS is because there are some minor differences in different Linux variants.
+
+> **Extra Credit**: Keep following the parent inheritance chain until you get all the way to the base image. (Remember, a base image uses ``FROM scratch`` in the Dockerfile.)
