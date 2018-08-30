@@ -38,7 +38,7 @@ We're going to use ``docker inspect`` against a PHP image. Before we do that, le
 
    The ``-f`` option forces removal of an image if ``docker rmi`` can't remove it gracefully. The ``$(COMMAND)`` portion tells ``docker rmi`` to run once for each return value of the command. 
 
-   When you ran this, what did you see? You should have seen a ton of error messages. That's because the parameter that we pass to ``docker rmi`` should be an image ID or an image name. However, when you run ``docker images``, you get the image name and ID, along with a bunch of other information. Fortunately, there's a ways to run ``docker images`` and only return the ID of the image. 
+   When you ran this, what did you see? You should have seen a ton of error messages. That's because the parameter that we pass to ``docker rmi`` should be an image ID or an image name. However, when you run ``docker images``, you get the image name and ID, along with a bunch of other information. Fortunately, there's a way to run ``docker images`` and only return the ID of the image. 
 
 3. From your command line, run the following command:
 
