@@ -48,6 +48,7 @@ This tells us that the container is listening on port 80, but it also tells us t
 ``
 0.0.0.0:80->80/tcp
 ``
+> **Note:** The IP address of ``0.0.0.0`` translates to all IPs on the system.
 
 The port on the left of the ``->`` is the port on the host OS that's mapped to the port in the container. 
 
