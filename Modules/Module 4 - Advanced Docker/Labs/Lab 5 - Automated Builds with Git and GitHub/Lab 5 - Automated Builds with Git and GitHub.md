@@ -90,5 +90,27 @@ Let's test the automated build by making a small change to the GitHub repository
 
 For this lab, you'll make a change to a PHP file directly in GitHub and then save that change directly into your master branch. In a real-world environment, you would have a local copy of the repository. You would make changes to the file, commit those changes to your local copy of the repository, and then push those changes to the GitHub repository.
 
+1. Browse to your repository in GitHub.
+2. Click on the **index.php** file.
+3. Click the **Edit** button.
+
+![alt text](images/editfile.png "Edit a File")
+
+4. Replace the content in the file with the following code:
+
+   ```
+   <?php
+      phpinfo();
+   ?>
+   ```
+5. Click on **Commit Changes** to save your changes to the file.
+
+![alt text](images/commit.png "Committing a Change")
+
+If you now switch back to Docker Hub and click on **Build Settings**, you'll see that a new build has been triggered for you automatically.
+
+![alt text](images/queued_build.png "A New Build")
+
+> **Extra Credit:** Set up continuous deployment with Web App for Containers so that when a new change is pushed to GitHub, a new Docker image is built in Docker Hub, and Web App for Containers picks up that change and pulls your new image.
 
 
