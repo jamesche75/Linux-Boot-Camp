@@ -112,6 +112,6 @@ Let's confirm these things while learning a lot more about this image.
 
    Given that, how do you find out the parent image for this image? Simple. You have to look at the Dockerfile. We'll go into that more a little later in this lab.
 
- 
+You can  
 
 
