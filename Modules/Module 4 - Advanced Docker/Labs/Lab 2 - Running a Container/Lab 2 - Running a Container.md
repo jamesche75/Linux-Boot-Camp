@@ -80,6 +80,7 @@ Now we need to recreate the container with the correct network configuration. Do
 
    ``docker run -d -p 8000:80 mydockerapp:1.0``
 
+
 The only difference between this command and the one you ran before is the ``-p`` option. We use the ``-p`` option to tell Docker what port to map from the host OS into the port that's listening in the container. 
 
 > **More Info:** Why did we use port 8000 instead of port 80? If you're doing this on a Windows machine, the Microsoft HTTP API will be listening on port 80, and that will cause a port conflict. If you're not doing this on a Windows machine, you could have used ``-p 80:80`` to map port 80.
